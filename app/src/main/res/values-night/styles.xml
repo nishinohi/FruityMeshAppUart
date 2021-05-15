@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="device_name_edit">
+        <item name="tint">@color/night_device_name_edit</item>
+    </style>
+
+    <style name="activate_button" parent="Widget.AppCompat.Button">
+        <item name="backgroundTint">@color/night_button_tint</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+</resources>

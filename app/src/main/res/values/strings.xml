@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">FruityMeshAppUart</string>
+    <string name="MataGeek">FruityMeshAppUart</string>
+    <string name="scanner_label">Scanner</string>
+    <string name="bluetooth_disabled_title">Bluetooth is not available</string>
+    <string name="bluetooth_disabled_info">bluetooth disable info</string>
+    <string name="bluetooth_disabled_action">eable</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="scanner_guide_title">no device title</string>
+    <string name="scanner_guide_info">no device info</string>
+    <string name="scanner_guide_location_info">no device location info</string>
+    <string name="scanner_guide_location_action">Enable</string>
+    <string name="cluster_size">ClusterSize</string>
+    <string name="node_activate_button">Activate</string>
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_initializing">Initializing…</string>
+    <string name="handshake_state_handshaking">Handshaking…</string>
+    <string name="preference_device_name_key">preference_device_name_key</string>
+    <string name="default_device_name">Unknown device</string>
+    <string name="device_config_edit_title">Edit Device Name</string>
+    <string name="preference_network_key">network_key</string>
+    <string name="network_key">preference_network_key</string>
+    <string name="device_name">Device Name</string>
+    <string name="trap_state">Trap State</string>
+    <string name="battery">Battery</string>
+    <string name="initialize">Initialize</string>
+    <string name="test_send">Test Send</string>
+    <string name="connecting">Connecting…</string>
+    <string name="device_info">Device Info</string>
+    <string name="matageek_mode">Mode</string>
+    <string name="mode_info">Mode Info</string>
+    <string name="bluetooth_disabled">BLUETOOTH DISABLED</string>
+    <string name="bluetooth_require_explain">Matageek requires bluetooth function</string>
+    <string name="bluetooth_enable">Enable</string>
+    <string name="gps_disabled">GPS DISABLED</string>
+    <string name="gps_require_explain">Matageek requires gps function</string>
+    <string name="gps_enable">Enable</string>
+    <string name="bluetooth_denied_permission">BLUETOOTH PERMISSION DENIED</string>
+    <string name="bluetooth_permission_explain">Matageek requires bluetooth permission</string>
+    <string name="gps_denied_permission">GPS PERMISSION DENIED</string>
+    <string name="gps_permission_explain">Matageek requires gps permission</string>
+    <string name="connection_info">Connection Info</string>
+    <string name="node_id">Node ID</string>
+    <string name="sample">Trade and Industry" in Article 36-20, paragraph 2 shall be deemed to be replaced with "a method that conforms to the technical standards established by an Ordinance of the Ministry of Economy, Trade and Industry under Article 39-10, paragraph 1," the term "Inspection" in Article 36-20, paragraph 2, Articles 36-21 to 36-23, and Articles 36-25 to 36-27 shall be deemed to be replaced with "Conformity Inspection," the term "Gas Supplier" in Article 36-23-2, paragraph 2 shall be deemed to be replaced with "Manufacturer/Importer Subject to Inspection," the phrase "the items of paragraph 1 of Article 36-18" in Article 36-24 shall be deemed to be replaced with "the items of paragraph 1 of Article 39-14-3," and the phrase "Article 36-2-2, paragraph 1" in Article 36-26, item 5 shall be deemed to be replaced with "Article 39-11, paragraph 1. Trade and Industry" in Article 36-20, paragraph 2 shall be deemed to be replaced with "a method that conforms to the technical standards established by an Ordinance of the Ministry of Economy, Trade and Industry under Article 39-10, paragraph 1," the term "Inspection" in Article 36-20, paragraph 2, Articles 36-21 to 36-23, and Articles 36-25 to 36-27 shall be deemed to be replaced with "Conformity Inspection," the term "Gas Supplier" in Article 36-23-2, paragraph 2 shall be deemed to be replaced with "Manufacturer/Importer Subject to Inspection," the phrase "the items of paragraph 1 of Article 36-18" in Article 36-24 shall be deemed to be replaced with "the items of paragraph 1 of Article 39-14-3," and the phrase "Article 36-2-2, paragraph 1" in Article 36-26, item 5 shall be deemed to be replaced with "Article 39-11, paragraph 1. Trade and Industry" in Article 36-20, paragraph 2 shall be deemed to be replaced with "a method that conforms to the technical standards established by an Ordinance of the Ministry of Economy, Trade and Industry under Article 39-10, paragraph 1," the term "Inspection" in Article 36-20, paragraph 2, Articles 36-21 to 36-23, and Articles 36-25 to 36-27 shall be deemed to be replaced with "Conformity Inspection," the term "Gas Supplier" in Article 36-23-2, paragraph 2 shall be deemed to be replaced with "Manufacturer/Importer Subject to Inspection," the phrase "the items of paragraph 1 of Article 36-18" in Article 36-24 shall be deemed to be replaced with "the items of paragraph 1 of Article 39-14-3," and the phrase "Article 36-2-2, paragraph 1" in Article 36-26, item 5 shall be deemed to be replaced with "Article 39-11, paragraph 1. </string>
+    <string name="terminal_command">Terminal Command</string>
+    <string name="send">Send</string>
+    <string name="log">Log</string>
+
+</resources>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ic_bluetooth_disable"
+        android:layout_width="@dimen/ic_bluetooth_disabled_size"
+        android:layout_height="@dimen/ic_bluetooth_disabled_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled"
+        app:tint="@color/permission_setting_de_active" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/bluetooth_disable_title"
+        style="@style/permission_setting_invalid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/bluetooth_disabled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ic_bluetooth_disable" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/bluetooth_permission_explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/bluetooth_require_explain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bluetooth_disable_title" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/action_enable_bluetooth"
+        style="@style/activate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/bluetooth_enable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bluetooth_permission_explain" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/bluetooth_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="bluetooth_permission_explain,action_enable_bluetooth,ic_bluetooth_disable,bluetooth_disable_title"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/ic_gps_disable"
+        android:layout_width="@dimen/ic_bluetooth_disabled_size"
+        android:layout_height="@dimen/ic_bluetooth_disabled_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_location_off"
+        app:tint="@color/permission_setting_de_active" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/gps_disable_title"
+        style="@style/permission_setting_invalid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/gps_disabled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ic_gps_disable" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/gps_permission_explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/gps_require_explain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gps_disable_title" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/action_enable_gps"
+        style="@style/activate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/gps_enable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gps_permission_explain" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gps_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="action_enable_gps,ic_gps_disable,gps_permission_explain,gps_disable_title"
+        tools:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

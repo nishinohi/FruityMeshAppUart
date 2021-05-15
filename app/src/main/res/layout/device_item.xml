@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/device_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/scanner_horizontal_margin"
+    android:paddingTop="@dimen/scanner_padding_top"
+    android:paddingEnd="@dimen/scanner_horizontal_margin"
+    android:paddingBottom="@dimen/scanner_padding_bottom">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/device_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/scanner_horizontal_margin"
+        android:background="@drawable/ic_background"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_device_item" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/discovered_device_name"
+        style="@style/device_list_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/scanner_horizontal_margin"
+        android:layout_toStartOf="@id/rssi"
+        android:layout_toEndOf="@id/device_icon"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="MataGeek Device" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/device_address"
+        style="@style/device_list_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/discovered_device_name"
+        android:layout_toEndOf="@id/device_icon"
+        tools:text="AA:BB:CC:DD:EE:FF" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/rssi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_signal_bar"
+        tools:src="@drawable/ic_signal_3_bar" />
+
+</RelativeLayout>
