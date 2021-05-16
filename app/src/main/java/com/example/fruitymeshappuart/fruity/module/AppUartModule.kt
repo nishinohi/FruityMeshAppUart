@@ -34,8 +34,8 @@ class AppUartModule : Module(
                 splitHeader = MessageType.getMessageType(get())
                 splitCount = get()
                 partLen = get()
-                data = ByteArray(partLen.toInt())
-                get(data, 0, partLen.toInt())
+                data = ByteArray(partLen.toUByte().toInt())
+                get(data, 0, partLen.toUByte().toInt())
             }
         }
 
