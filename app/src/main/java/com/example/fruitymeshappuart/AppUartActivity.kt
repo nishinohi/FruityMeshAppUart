@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import com.example.fruitymeshappuart.adapter.DiscoveredDevice
@@ -19,6 +20,8 @@ import com.example.fruitymeshappuart.dialog.DialogDeviceNameEdit
 import com.example.fruitymeshappuart.manager.DeviceInfo
 import com.example.fruitymeshappuart.manager.MeshAccessManager
 import com.example.fruitymeshappuart.viewmodels.AppUartViewModel
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import no.nordicsemi.android.ble.livedata.state.ConnectionState
 import no.nordicsemi.android.ble.observer.ConnectionObserver
 
@@ -82,6 +85,12 @@ class AppUartActivity : AppCompatActivity(),
         bind.log.adapter = logAdapter
         bind.commandSendButton.setOnClickListener {
             val sendCommand = bind.terminalCommandInput.text.toString()
+            if (sendCommand.length > AppUartViewModel.TERMINAL_READ_BUFFER_LENGTH) {
+                Snackbar.make(
+                    it, R.string.too_long_command, BaseTransientBottomBar.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
             if (sendCommand.isNotEmpty()) {
                 currentViewModel.sendTerminalCommand(sendCommand)
             }

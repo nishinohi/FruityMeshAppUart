@@ -46,5 +46,6 @@
     <string name="terminal_command">Terminal Command</string>
     <string name="send">Send</string>
     <string name="log">Log</string>
+    <string name="too_long_command">Too long command(max 300)</string>
 
 </resources>

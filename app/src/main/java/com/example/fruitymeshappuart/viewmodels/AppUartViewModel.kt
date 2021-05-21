@@ -213,6 +213,7 @@ class AppUartViewModel(application: Application) :
 
     companion object {
         const val EXTRA_DEVICE: String = "com.matageek.EXTRA_DEVICE"
+        const val TERMINAL_READ_BUFFER_LENGTH = 300
     }
 
 }
