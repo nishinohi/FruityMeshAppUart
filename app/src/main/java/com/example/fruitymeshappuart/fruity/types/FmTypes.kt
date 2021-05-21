@@ -10,6 +10,7 @@ class FmTypes {
 
         const val MAX_DATA_SIZE_PER_WRITE: Int = 20
         const val SECRET_KEY_LENGTH = 16
+        const val EOL = "\r\n"
     }
 
 }
