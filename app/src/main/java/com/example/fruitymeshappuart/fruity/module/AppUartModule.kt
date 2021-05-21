@@ -19,25 +19,6 @@ class AppUartModule : Module(
         RECEIVE_LOG(1),
     }
 
-    class AppUartModuleTerminalResponseMessage : ConnectionMessageTypes {
-        val commandSuccess: Boolean
-
-        constructor(packet: ByteArray) {
-            if (packet.size < SIZEOF_PACKET) throw MessagePacketSizeException(
-                this::class.java.toString(), SIZEOF_PACKET
-            )
-            commandSuccess = getByteBufferWrap(packet).get() == 1.toByte()
-        }
-
-        override fun createBytePacket(): ByteArray {
-            TODO("Not yet implemented")
-        }
-
-        companion object {
-            const val SIZEOF_PACKET = 1
-        }
-    }
-
     class AppUartModuleDataMessage : ConnectionMessageTypes {
         val splitHeader: MessageType
         val splitCount: Byte
