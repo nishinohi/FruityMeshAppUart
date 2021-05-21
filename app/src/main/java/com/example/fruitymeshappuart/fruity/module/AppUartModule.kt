@@ -19,11 +19,37 @@ class AppUartModule : Module(
         RECEIVE_LOG(1),
     }
 
+    class AppUartModuleTerminalResponseMessage : ConnectionMessageTypes {
+        val commandSuccess: Boolean
+
+        constructor(packet: ByteArray) {
+            if (packet.size < SIZEOF_PACKET) throw MessagePacketSizeException(
+                this::class.java.toString(), SIZEOF_PACKET
+            )
+            commandSuccess = getByteBufferWrap(packet).get() == 1.toByte()
+        }
+
+        override fun createBytePacket(): ByteArray {
+            TODO("Not yet implemented")
+        }
+
+        companion object {
+            const val SIZEOF_PACKET = 1
+        }
+    }
+
     class AppUartModuleDataMessage : ConnectionMessageTypes {
         val splitHeader: MessageType
         val splitCount: Byte
         val partLen: Byte
         val data: ByteArray
+
+        constructor(splitHeader: MessageType, splitCount: Byte, partLen: Byte, data: ByteArray) {
+            this.splitHeader = splitHeader
+            this.splitCount = splitCount
+            this.partLen = partLen
+            this.data = data
+        }
 
         constructor(packet: ByteArray) {
             if (packet.size < MIN_SIZEOF_PACKET) throw MessagePacketSizeException(
@@ -40,7 +66,9 @@ class AppUartModule : Module(
         }
 
         override fun createBytePacket(): ByteArray {
-            TODO("Not yet implemented")
+            return getByteBufferAllocate(
+                SIZEOF_APP_UART_MODULE_DATA_MESSAGE_STATIC + data.size
+            ).put(splitHeader.typeValue).put(splitCount).put(partLen).put(data).array()
         }
 
         companion object {
@@ -48,6 +76,7 @@ class AppUartModule : Module(
             const val MAX_SIZEOF_PACKET =
                 Config.MAX_MESH_PACKET_SIZE - ConnPacketVendorModule.SIZEOF_PACKET
             const val MIN_SIZEOF_PACKET = SIZEOF_APP_UART_MODULE_DATA_MESSAGE_STATIC + 1
+            const val DATA_MAX_LEN = MAX_SIZEOF_PACKET - SIZEOF_APP_UART_MODULE_DATA_MESSAGE_STATIC
         }
 
     }
