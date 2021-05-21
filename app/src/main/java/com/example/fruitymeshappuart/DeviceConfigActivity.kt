@@ -77,18 +77,15 @@ class DeviceConfigActivity : AppCompatActivity(),
         currentViewModel.log.observe(this) {
             logAdapter.pushLog(it)
             logAdapter.notifyItemInserted(logAdapter.itemCount - 1)
+            bind.log.scrollToPosition(logAdapter.itemCount - 1)
         }
         bind.log.adapter = logAdapter
-//        currentViewModel.nodeIdList.observe(this, {
-//            spinnerAdapter.clear()
-//            spinnerAdapter.addAll(it.sorted())
-//            spinnerAdapter.notifyDataSetChanged()
-//            it.sorted().forEachIndexed { index, nodeId ->
-//                if (nodeId == currentViewModel.displayNodeId) {
-//                    bind.nodeIdSpinner.setSelection(index)
-//                }
-//            }
-//        })
+        bind.commandSendButton.setOnClickListener {
+            val sendCommand = bind.terminalCommandInput.text.toString()
+            if (sendCommand.isNotEmpty()) {
+                currentViewModel.sendTerminalCommand(sendCommand)
+            }
+        }
     }
 
     private fun isActivated(): Boolean {
@@ -177,18 +174,5 @@ class DeviceConfigActivity : AppCompatActivity(),
     companion object {
         const val EXTRA_DEVICE: String = "com.matageek.EXTRA_DEVICE"
     }
-
-//    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//        spinnerAdapter.getItem(position)?.let {
-//            currentViewModel.displayNodeId = it
-////            currentViewModel.updateDeviceInfo(it)
-////            currentViewModel.updateDeviceInfo2(it)
-//        }
-//    }
-//
-//    override fun onNothingSelected(parent: AdapterView<*>?) {
-////        TODO("Not yet implemented")
-//    }
-
 
 }

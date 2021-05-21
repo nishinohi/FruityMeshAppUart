@@ -12,10 +12,6 @@ abstract class Module(
 ) {
     private var observer: ModuleMessageObserver? = null
 
-    fun notifyTriggerObserver(type: Byte, message: ConnectionMessageTypes) {
-        observer?.updateTriggerMessageData(type, message)
-    }
-
     fun notifyResponseObserver(type: Byte, message: ConnectionMessageTypes) {
         observer?.updateResponseMessageData(type, message)
     }
@@ -25,12 +21,8 @@ abstract class Module(
         this.observer = observer
     }
 
-    fun removeModuleMessageObserver() {
-        this.observer = null
-    }
-
     //TODO: reliable is currently not supported and by default false. The input is ignored
-    protected fun createSendModuleActionMessagePacket(
+    fun createSendModuleActionMessagePacket(
         messageType: MessageType, receiver: Short, requestHandle: Byte, actionType: Byte,
         additionalData: ByteArray?, additionalDataSize: Int, reliable: Boolean,
     ): ByteArray {
@@ -54,16 +46,6 @@ abstract class Module(
         }
         if (additionalData != null) packetBuf.put(additionalData)
         return packetBuf.array()
-    }
-
-    fun createTriggerActionMessagePacket(
-        receiver: Short, actionType: Byte, additionalData: ByteArray? = null,
-        additionalDataSize: Int = 0, requestHandle: Byte = 0,
-    ): ByteArray {
-        return createSendModuleActionMessagePacket(
-            MessageType.MODULE_TRIGGER_ACTION,
-            receiver, requestHandle, actionType, additionalData, additionalDataSize, false
-        )
     }
 
     abstract fun actionResponseMessageReceivedHandler(packet: ByteArray)

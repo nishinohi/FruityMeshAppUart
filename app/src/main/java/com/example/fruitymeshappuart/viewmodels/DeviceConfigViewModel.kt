@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.fruitymeshappuart.R
 import com.example.fruitymeshappuart.adapter.DiscoveredDevice
 import com.example.fruitymeshappuart.fruity.module.AppUartModule
@@ -30,13 +31,11 @@ class DeviceConfigViewModel(application: Application) :
     var displayBleAddr = ""
     val clusterSize: MutableLiveData<Short> = MutableLiveData()
 
-    //    val batteryInfo: MutableLiveData<Byte> = MutableLiveData()
-//    val trapState: MutableLiveData<Boolean> = MutableLiveData()
     val deviceName: MutableLiveData<String> = MutableLiveData()
 
-    /** Mesh Graph */
-//    val meshGraph = MeshGraph(meshAccessManager.getPartnerId())
-//    val nodeIdList: MutableLiveData<List<Short>> = MutableLiveData()
+    /** Terminal Command **/
+    var stackTerminalCommand: String = ""
+    var stackSentLen: Int = 0
 
     /** Log **/
     val log: MutableLiveData<String> = MutableLiveData()
@@ -83,16 +82,25 @@ class DeviceConfigViewModel(application: Application) :
         progressState.postValue(false)
     }
 
+    /**
+     * responseActionType is used to generate a key that identifies the callback to be called when
+     * the response is received, if a response to the outgoing message is expected
+     */
     private suspend fun sendModuleActionTriggerMessageAsync(
         targetNodeId: Short, moduleIdWrapper: ModuleIdWrapper, triggerActionType: Byte,
-        responseActionType: Byte, counter: Short,
+        responseActionType: Byte = 255.toByte(), counter: Short = 0,
+        additionalData: ByteArray? = null, additionalDataSize: Int = 0,
         customCallback: ((packet: ByteArray) -> Unit)? = null,
     ): Boolean {
         return suspendCancellableCoroutine {
-            meshAccessManager.sendModuleActionTriggerMessage(
-                moduleIdWrapper,
-                triggerActionType, targetNodeId
+            meshAccessManager.sendModuleActionMessage(
+                MessageType.MODULE_TRIGGER_ACTION, moduleIdWrapper,
+                triggerActionType, targetNodeId, 0, additionalData, additionalDataSize
             )
+            if (counter == 0.toShort()) {
+                it.resume(true)
+                return@suspendCancellableCoroutine
+            }
             meshAccessManager.addTimeoutJob(
                 moduleIdWrapper, responseActionType, 0, counter,
                 { it.resume(true) }, customCallback
@@ -100,78 +108,80 @@ class DeviceConfigViewModel(application: Application) :
         }
     }
 
-//    fun updateDeviceInfo2(
-//        targetNodeId: Short = meshAccessManager.getPartnerId(),
-//        successCallback: (() -> Unit)? = null,
-//        failedCallback: (() -> Unit)? = null, timeoutMillis: Long = 5000,
-//    ) {
-//        viewModelScope.launch {
-//            withTimeout(timeoutMillis) {
-//                try {
-//                    sendModuleActionTriggerMessageAsync(targetNodeId,
-//                        ModuleIdWrapper(ModuleId.STATUS_REPORTER_MODULE.id),
-//                        StatusReporterModule.StatusModuleTriggerActionMessages.GET_DEVICE_INFO_V2.type,
-//                        StatusReporterModule.StatusModuleActionResponseMessages.DEVICE_INFO_V2.type,
-//                        1) { packet ->
-//                        val deviceInfo2Message =
-//                            StatusReporterModule.StatusReporterModuleDeviceInfo2Message(packet.copyOfRange(
-//                                ConnPacketModule.SIZEOF_PACKET,
-//                                packet.size))
-//                        val bleAddr = ("${"%x".format(deviceInfo2Message.gapAddress.addr[5])}:" +
-//                                "${"%x".format(deviceInfo2Message.gapAddress.addr[4])}:" +
-//                                "${"%x".format(deviceInfo2Message.gapAddress.addr[3])}:" +
-//                                "${"%x".format(deviceInfo2Message.gapAddress.addr[2])}:" +
-//                                "${"%x".format(deviceInfo2Message.gapAddress.addr[1])}:" +
-//                                "%x".format(deviceInfo2Message.gapAddress.addr[0])).toUpperCase(
-//                            Locale.ROOT)
-//                        displayBleAddr = bleAddr
-//                        updateDisplayDeviceInfo(
-//                            DeviceInfo(
-//                            targetNodeId, null, null, null,
-//                            deviceNamePreferences.getString(bleAddr, "Unknown Device"))
-//                        )
-//                    }
-//                } catch (e: TimeoutCancellationException) {
-//
-//                }
-//            }
-//        }
-//    }
+    private fun sendModuleActionResponseMessage(
+        targetNodeId: Short, moduleIdWrapper: ModuleIdWrapper, responseActionType: Byte,
+        additionalData: ByteArray? = null, additionalDataSize: Int = 0,
+    ) {
+        meshAccessManager.sendModuleActionMessage(
+            MessageType.MODULE_ACTION_RESPONSE, moduleIdWrapper,
+            responseActionType, targetNodeId, 0, additionalData, additionalDataSize
+        )
+    }
 
-//    fun updateDeviceInfo(
-//        targetNodeId: Short = meshAccessManager.getPartnerId(),
-//        successCallback: (() -> Unit)? = null,
-//        failedCallback: (() -> Unit)? = null, timeoutMillis: Long = 5000,
-//    ) {
-//        viewModelScope.launch {
-//            withTimeout(timeoutMillis) {
-//                try {
-//                    sendModuleActionTriggerMessageAsync(targetNodeId,
-//                        ModuleIdWrapper(ModuleId.STATUS_REPORTER_MODULE.id),
-//                        StatusReporterModule.StatusModuleTriggerActionMessages.GET_STATUS.type,
-//                        StatusReporterModule.StatusModuleActionResponseMessages.STATUS.type,
-//                        1) { packet ->
-//                        val statusMessage =
-//                            StatusReporterModule.StatusReporterModuleStatusMessage.readFromBytePacket(
-//                                packet.copyOfRange(ConnPacketModule.SIZEOF_PACKET, packet.size))
-//                        updateDisplayDeviceInfo(
-//                            DeviceInfo(targetNodeId,
-//                            null, statusMessage.batteryInfo)
-//                        )
-//                        successCallback?.let { it() }
-//                    }
-//                } catch (e: TimeoutCancellationException) {
-//                    failedCallback?.let { it() }
-//                }
-//            }
-//        }
-//    }
+    fun sendReceiveLogResponse(targetNodeId: Short = meshAccessManager.getPartnerId()) {
+        sendModuleActionResponseMessage(
+            targetNodeId,
+            ModuleIdWrapper.generateVendorModuleIdWrapper(VendorModuleId.APP_UART_MODULE.id, 1),
+            AppUartModule.AppUartModuleActionResponseMessages.RECEIVE_LOG.type
+        )
+    }
+
+    fun sendTerminalCommand(
+        terminalCommand: String?,
+        targetNodeId: Short = meshAccessManager.getPartnerId(),
+        successCallback: (() -> Unit)? = null,
+        failedCallback: (() -> Unit)? = null, timeoutMillis: Long = 5000
+    ) {
+        if (terminalCommand == null && stackSentLen == 0) return
+        terminalCommand?.let { stackTerminalCommand = terminalCommand }
+        terminalCommand?.let { stackSentLen = 0 }
+
+        viewModelScope.launch {
+            withTimeout(timeoutMillis) {
+                try {
+                    val isAllSent =
+                        stackTerminalCommand.length - stackSentLen <= AppUartModule.AppUartModuleDataMessage.DATA_MAX_LEN
+                    val sendTerminalCommand =
+                        if (isAllSent) stackTerminalCommand.substring(
+                            stackSentLen,
+                            stackTerminalCommand.length
+                        ) else
+                            stackTerminalCommand.substring(
+                                stackSentLen,
+                                AppUartModule.AppUartModuleDataMessage.DATA_MAX_LEN
+                            )
+                    val splitCount =
+                        (stackSentLen / AppUartModule.AppUartModuleDataMessage.DATA_MAX_LEN).toByte()
+                    val message = AppUartModule.AppUartModuleDataMessage(
+                        if (isAllSent) MessageType.SPLIT_WRITE_CMD_END else MessageType.SPLIT_WRITE_CMD,
+                        splitCount, sendTerminalCommand.length.toByte(),
+                        sendTerminalCommand.toByteArray()
+                    )
+                    if (isAllSent) stackSentLen = 0
+                    else stackSentLen += sendTerminalCommand.length
+                    sendModuleActionTriggerMessageAsync(
+                        targetNodeId,
+                        ModuleIdWrapper.generateVendorModuleIdWrapper(
+                            VendorModuleId.APP_UART_MODULE.id,
+                            1
+                        ),
+                        AppUartModule.AppUartModuleTriggerActionMessages.TERMINAL_COMMAND.type,
+                        AppUartModule.AppUartModuleActionResponseMessages.TERMINAL_RETURN_TYPE.type,
+                        1, message.createBytePacket(), message.createBytePacket().size,
+                        if (isAllSent) null else fun(_: ByteArray) {
+                            sendTerminalCommand(null, targetNodeId)
+                        }
+                    )
+                    successCallback?.let { it() }
+                } catch (e: TimeoutCancellationException) {
+                    failedCallback?.let { it() }
+                }
+            }
+        }
+    }
 
     override fun updateDisplayDeviceInfo(deviceInfo: DeviceInfo) {
-//        if (deviceInfo.nodeId != displayNodeId) return
         deviceInfo.clusterSize?.let { clusterSize.postValue(it) }
-//        deviceInfo.batteryInfo?.let { batteryInfo.postValue(it) }
-//        deviceInfo.trapState?.let { trapState.postValue(it) }
         deviceInfo.deviceName?.let { deviceName.postValue(it) }
     }
 
@@ -182,7 +192,6 @@ class DeviceConfigViewModel(application: Application) :
     fun updateDisplayNodeIdByPartnerId() {
         displayNodeId.postValue(meshAccessManager.getPartnerId())
     }
-
 
     private fun addModuleMessageObserver() {
         val appUartModule = AppUartModule().apply {
@@ -199,6 +208,15 @@ class DeviceConfigViewModel(application: Application) :
                             if (message !is AppUartModule.AppUartModuleDataMessage) return
                             tempLog += message.data.toString(Charsets.UTF_8)
                             if (message.splitHeader == MessageType.SPLIT_WRITE_CMD_END) {
+                                // Do not output logs with only newlines
+                                if (tempLog == FmTypes.EOL) {
+                                    tempLog = ""
+                                    return
+                                }
+                                // Remove newline codes from logs.
+                                if (tempLog.length > 2 && tempLog.substring(tempLog.length - 2) == FmTypes.EOL) {
+                                    tempLog = tempLog.substring(0, tempLog.length - 2)
+                                }
                                 log.postValue(tempLog)
                                 tempLog = ""
                                 return

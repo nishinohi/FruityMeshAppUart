@@ -106,7 +106,7 @@
         app:layout_constraintTop_toBottomOf="@+id/terminal_command_title" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/command_send"
+        android:id="@+id/command_send_button"
         style="@style/activate_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -166,7 +166,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="node_id_title,connection_title,node_id_spinner,activated_cluster_size_title,activated_cluster_size,log_title,command_send,terminal_command_input,terminal_command_title"
+        app:constraint_referenced_ids="node_id_title,connection_title,node_id_spinner,activated_cluster_size_title,activated_cluster_size,log_title,command_send_button,terminal_command_input,terminal_command_title"
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Group

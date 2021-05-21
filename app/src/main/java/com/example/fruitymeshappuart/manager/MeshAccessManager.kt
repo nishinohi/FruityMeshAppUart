@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Message
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.fruitymeshappuart.R
@@ -213,16 +214,17 @@ class MeshAccessManager(context: Context, private val observer: DeviceInfoObserv
         meshAccessDataCallback.startEncryptionHandshake()
     }
 
-    fun sendModuleActionTriggerMessage(
-        moduleIdWrapper: ModuleIdWrapper, actionType: Byte,
-        receiver: Short = meshAccessDataCallback.partnerId, additionalData: ByteArray? = null,
+    fun sendModuleActionMessage(
+        messageType: MessageType, moduleIdWrapper: ModuleIdWrapper, actionType: Byte,
+        receiver: Short = meshAccessDataCallback.partnerId, requestHandle: Byte,
+        additionalData: ByteArray? = null,
         additionalDataSize: Int = 0, callback: SuccessCallback? = null,
     ) {
         val module = findModuleById<Module>(moduleIdWrapper.wrappedModuleId)
         meshAccessDataCallback.sendPacket(
-            module.createTriggerActionMessagePacket(
-                receiver,
-                actionType, additionalData, additionalDataSize
+            module.createSendModuleActionMessagePacket(
+                messageType, receiver, requestHandle,
+                actionType, additionalData, additionalDataSize, false
             ),
             meshAccessDataCallback.encryptionNonce,
             meshAccessDataCallback.encryptionKey, callback

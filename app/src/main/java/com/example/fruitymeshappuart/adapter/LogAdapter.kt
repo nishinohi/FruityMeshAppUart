@@ -9,13 +9,15 @@ import com.example.fruitymeshappuart.databinding.LogItemBinding
 
 class LogAdapter :
     RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
-    private val logBuffer: MutableList<String> = mutableListOf()
+    private val logBuffer: MutableList<Pair<String, Int>> = mutableListOf()
+    private var counter = 0
 
     fun pushLog(logContent: String) {
         if (logBuffer.size > LOG_MAX_BUFFER) {
             logBuffer.removeFirst()
+            notifyItemRemoved(0)
         }
-        logBuffer.add(logContent)
+        logBuffer.add(Pair(logContent, ++counter))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogViewHolder {
@@ -24,8 +26,8 @@ class LogAdapter :
     }
 
     override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
-        holder.bind.content.text = logBuffer[position]
-        holder.bind.line.text = (position + 1).toString()
+        holder.bind.content.text = logBuffer[position].first
+        holder.bind.line.text = (logBuffer[position].second).toString()
     }
 
     class LogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
