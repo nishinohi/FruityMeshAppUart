@@ -48,6 +48,10 @@ class MeshAccessManager(context: Context, private val observer: DeviceInfoObserv
         val customCallBack: ((packet: ByteArray) -> Unit)?,
     )
 
+    fun deleteTimeoutJob(moduleIdWrapper: ModuleIdWrapper, actionType: Byte, requestHandle: Byte) {
+        timeoutMap.remove(generateTimeoutKey(moduleIdWrapper, actionType, requestHandle))
+    }
+
     fun addTimeoutJob(
         moduleIdWrapper: ModuleIdWrapper, actionType: Byte, requestHandle: Byte, counter: Short,
         successCallback: () -> Unit, customCallBack: ((packet: ByteArray) -> Unit)? = null,

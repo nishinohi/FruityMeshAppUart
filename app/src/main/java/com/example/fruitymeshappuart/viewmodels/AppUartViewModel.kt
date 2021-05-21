@@ -156,6 +156,14 @@ class AppUartViewModel(application: Application) :
                     )
                     successCallback?.let { it() }
                 } catch (e: TimeoutCancellationException) {
+                    meshAccessManager.deleteTimeoutJob(
+                        ModuleIdWrapper.generateVendorModuleIdWrapper(
+                            VendorModuleId.APP_UART_MODULE.id,
+                            1
+                        ),
+                        AppUartModule.AppUartModuleActionResponseMessages.TERMINAL_RETURN_TYPE.type,
+                        0
+                    )
                     failedCallback?.let { it() }
                 }
             }
