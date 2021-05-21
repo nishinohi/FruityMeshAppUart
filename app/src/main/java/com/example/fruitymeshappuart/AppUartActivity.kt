@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import com.example.fruitymeshappuart.adapter.DiscoveredDevice
