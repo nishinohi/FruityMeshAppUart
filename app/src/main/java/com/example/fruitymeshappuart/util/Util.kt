@@ -5,10 +5,6 @@ import kotlin.experimental.xor
 
 class Util {
     companion object {
-        fun isLocationEnabled(context: Context) {
-            // is marshmallow Or Above
-        }
-
         fun xorBytes(
             src: ByteArray, offsetSrc: Int,
             xor: ByteArray, offsetXor: Int, length: Int,
