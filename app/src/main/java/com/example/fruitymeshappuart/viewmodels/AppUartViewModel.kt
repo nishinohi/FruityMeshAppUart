@@ -17,7 +17,7 @@ import kotlinx.coroutines.*
 import no.nordicsemi.android.ble.livedata.state.ConnectionState
 import kotlin.coroutines.resume
 
-class DeviceConfigViewModel(application: Application) :
+class AppUartViewModel(application: Application) :
     AndroidViewModel(application), DeviceInfoObserver {
     private val meshAccessManager: MeshAccessManager = MeshAccessManager(application, this)
 
@@ -106,24 +106,6 @@ class DeviceConfigViewModel(application: Application) :
                 { it.resume(true) }, customCallback
             )
         }
-    }
-
-    private fun sendModuleActionResponseMessage(
-        targetNodeId: Short, moduleIdWrapper: ModuleIdWrapper, responseActionType: Byte,
-        additionalData: ByteArray? = null, additionalDataSize: Int = 0,
-    ) {
-        meshAccessManager.sendModuleActionMessage(
-            MessageType.MODULE_ACTION_RESPONSE, moduleIdWrapper,
-            responseActionType, targetNodeId, 0, additionalData, additionalDataSize
-        )
-    }
-
-    fun sendReceiveLogResponse(targetNodeId: Short = meshAccessManager.getPartnerId()) {
-        sendModuleActionResponseMessage(
-            targetNodeId,
-            ModuleIdWrapper.generateVendorModuleIdWrapper(VendorModuleId.APP_UART_MODULE.id, 1),
-            AppUartModule.AppUartModuleActionResponseMessages.RECEIVE_LOG.type
-        )
     }
 
     fun sendTerminalCommand(

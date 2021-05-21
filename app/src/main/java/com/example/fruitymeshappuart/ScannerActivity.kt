@@ -82,8 +82,8 @@ class ScannerActivity : AppCompatActivity() {
     private fun setRecycleViewAdapter() {
         // set recycle adapter
         val adapter = DevicesAdapter {
-            Intent(this, DeviceConfigActivity::class.java).apply {
-                putExtra(DeviceConfigActivity.EXTRA_DEVICE, it)
+            Intent(this, AppUartActivity::class.java).apply {
+                putExtra(AppUartActivity.EXTRA_DEVICE, it)
                 startActivity(this)
             }
         }

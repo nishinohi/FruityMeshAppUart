@@ -14,19 +14,19 @@ import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import com.example.fruitymeshappuart.adapter.DiscoveredDevice
 import com.example.fruitymeshappuart.adapter.LogAdapter
-import com.example.fruitymeshappuart.databinding.ActivityDeviceConfigBinding
+import com.example.fruitymeshappuart.databinding.ActivityAppUartBinding
 import com.example.fruitymeshappuart.dialog.DialogDeviceNameEdit
 import com.example.fruitymeshappuart.manager.DeviceInfo
 import com.example.fruitymeshappuart.manager.MeshAccessManager
-import com.example.fruitymeshappuart.viewmodels.DeviceConfigViewModel
+import com.example.fruitymeshappuart.viewmodels.AppUartViewModel
 import no.nordicsemi.android.ble.livedata.state.ConnectionState
 import no.nordicsemi.android.ble.observer.ConnectionObserver
 
-class DeviceConfigActivity : AppCompatActivity(),
+class AppUartActivity : AppCompatActivity(),
     DialogDeviceNameEdit.NoticeDeviceConfigListener {
-    private lateinit var _bind: ActivityDeviceConfigBinding
+    private lateinit var _bind: ActivityAppUartBinding
     private val bind get() = _bind
-    private val currentViewModel: DeviceConfigViewModel by viewModels()
+    private val currentViewModel: AppUartViewModel by viewModels()
     lateinit var deviceNamePreferences: SharedPreferences
     private lateinit var discoveredDevice: DiscoveredDevice
     private lateinit var spinnerAdapter: ArrayAdapter<Short>
@@ -35,7 +35,7 @@ class DeviceConfigActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _bind = ActivityDeviceConfigBinding.inflate(layoutInflater)
+        _bind = ActivityAppUartBinding.inflate(layoutInflater)
         setContentView(bind.root)
         // load setting
         deviceNamePreferences = getSharedPreferences(
@@ -44,7 +44,7 @@ class DeviceConfigActivity : AppCompatActivity(),
         )
         // get bundle
         discoveredDevice =
-            intent.getParcelableExtra(DeviceConfigViewModel.EXTRA_DEVICE)
+            intent.getParcelableExtra(AppUartViewModel.EXTRA_DEVICE)
                 ?: throw Resources.NotFoundException("device")
         // action bar enable back press
         setSupportActionBar(bind.deviceManageToolBar)

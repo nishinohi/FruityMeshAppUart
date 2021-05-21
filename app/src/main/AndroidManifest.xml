@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DeviceConfigActivity"
+            android:name=".AppUartActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ScannerActivity">
             <meta-data
