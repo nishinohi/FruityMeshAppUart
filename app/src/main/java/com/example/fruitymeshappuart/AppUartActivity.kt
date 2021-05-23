@@ -50,7 +50,7 @@ class AppUartActivity : AppCompatActivity(),
                 ?: throw Resources.NotFoundException("device")
         // action bar enable back press
         setSupportActionBar(bind.deviceManageToolBar)
-        supportActionBar?.title = "Device Manager"
+        supportActionBar?.title = "App Uart"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // set spinner adapter

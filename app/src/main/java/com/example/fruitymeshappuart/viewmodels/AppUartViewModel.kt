@@ -109,21 +109,21 @@ class AppUartViewModel(application: Application) :
     }
 
     fun sendTerminalCommand(
-        terminalCommand: String?,
+        inputCommand: String?,
         targetNodeId: Short = meshAccessManager.getPartnerId(),
         successCallback: (() -> Unit)? = null,
         failedCallback: (() -> Unit)? = null, timeoutMillis: Long = 5000
     ) {
-        if (terminalCommand == null && stackSentLen == 0) return
-        terminalCommand?.let { stackTerminalCommand = terminalCommand }
-        terminalCommand?.let { stackSentLen = 0 }
+        if (inputCommand == null && stackSentLen == 0) return
+        inputCommand?.let { stackTerminalCommand = inputCommand }
+        inputCommand?.let { stackSentLen = 0 }
 
         viewModelScope.launch {
             withTimeout(timeoutMillis) {
                 try {
                     val isAllSent =
                         stackTerminalCommand.length - stackSentLen <= AppUartModule.AppUartModuleDataMessage.DATA_MAX_LEN
-                    val sendTerminalCommand =
+                    val terminalCommand =
                         if (isAllSent) stackTerminalCommand.substring(
                             stackSentLen,
                             stackTerminalCommand.length
@@ -136,11 +136,14 @@ class AppUartViewModel(application: Application) :
                         (stackSentLen / AppUartModule.AppUartModuleDataMessage.DATA_MAX_LEN).toByte()
                     val message = AppUartModule.AppUartModuleDataMessage(
                         if (isAllSent) MessageType.SPLIT_WRITE_CMD_END else MessageType.SPLIT_WRITE_CMD,
-                        splitCount, sendTerminalCommand.length.toByte(),
-                        sendTerminalCommand.toByteArray()
+                        splitCount, terminalCommand.length.toByte(),
+                        terminalCommand.toByteArray()
                     )
                     if (isAllSent) stackSentLen = 0
-                    else stackSentLen += sendTerminalCommand.length
+                    else stackSentLen += terminalCommand.length
+
+                    if (inputCommand != null) inProgress()
+
                     sendModuleActionTriggerMessageAsync(
                         targetNodeId,
                         ModuleIdWrapper.generateVendorModuleIdWrapper(
@@ -154,6 +157,8 @@ class AppUartViewModel(application: Application) :
                             sendTerminalCommand(null, targetNodeId)
                         }
                     )
+
+                    if (isAllSent) endProgress()
                     successCallback?.let { it() }
                 } catch (e: TimeoutCancellationException) {
                     meshAccessManager.deleteTimeoutJob(
@@ -164,6 +169,7 @@ class AppUartViewModel(application: Application) :
                         AppUartModule.AppUartModuleActionResponseMessages.TERMINAL_RETURN_TYPE.type,
                         0
                     )
+                    endProgress()
                     failedCallback?.let { it() }
                 }
             }
