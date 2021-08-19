@@ -128,7 +128,7 @@ enum class ModuleId(val id: Byte) {
 
 enum class VendorModuleId(val id: Short) {
     MATAGEEK_MODULE(0xAB24.toShort()),
-    APP_UART_MODULE(0xAAAA.toShort())
+    APP_UART_MODULE(0x024D.toShort())
 }
 
 enum class DeviceType(val type: Byte) {
