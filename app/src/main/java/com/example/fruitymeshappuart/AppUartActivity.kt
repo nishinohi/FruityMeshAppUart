@@ -156,6 +156,7 @@ class AppUartActivity : AppCompatActivity(),
                 currentViewModel.displayBleAddr = discoveredDevice.device.address
                 bind.connectingGroup.visibility = View.GONE
                 bind.deviceConfigGroup.visibility = View.VISIBLE
+                currentViewModel.sendHandshake()
             }
             else -> throw Exception("Unknown Handshake state")
         }

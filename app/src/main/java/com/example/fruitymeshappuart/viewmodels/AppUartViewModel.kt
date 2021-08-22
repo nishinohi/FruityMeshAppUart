@@ -108,6 +108,38 @@ class AppUartViewModel(application: Application) :
         }
     }
 
+    fun sendHandshake(
+        targetNodeId: Short = meshAccessManager.getPartnerId(),
+        timeoutMillis: Long = 5000) {
+        viewModelScope.launch {
+            withTimeout(timeoutMillis) {
+                try {
+                    val messagePacket = AppUartModule.AppUartModuleHandshakeMessage(MeshAccessManager.NODE_ID).createBytePacket()
+
+                    sendModuleActionTriggerMessageAsync(
+                        targetNodeId,
+                        ModuleIdWrapper.generateVendorModuleIdWrapper(
+                            VendorModuleId.APP_UART_MODULE.id,
+                            1
+                        ),
+                        AppUartModule.AppUartModuleTriggerActionMessages.HANDSHAKE.type,
+                        AppUartModule.AppUartModuleActionResponseMessages.HANDSHAKE_DONE.type,
+                        1, messagePacket, messagePacket.size)
+                } catch (e: TimeoutCancellationException) {
+                    meshAccessManager.deleteTimeoutJob(
+                        ModuleIdWrapper.generateVendorModuleIdWrapper(
+                            VendorModuleId.APP_UART_MODULE.id,
+                            1
+                        ),
+                        AppUartModule.AppUartModuleActionResponseMessages.HANDSHAKE_DONE.type,
+                        0
+                    )
+                    endProgress()
+                }
+            }
+        }
+    }
+
     fun sendTerminalCommand(
         inputCommand: String?,
         targetNodeId: Short = meshAccessManager.getPartnerId(),

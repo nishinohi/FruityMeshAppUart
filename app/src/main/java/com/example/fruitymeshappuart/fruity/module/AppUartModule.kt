@@ -12,11 +12,32 @@ class AppUartModule : Module(
     enum class AppUartModuleTriggerActionMessages(val type: Byte) {
         TERMINAL_COMMAND(0),
         SEND_LOG(1),
+        HANDSHAKE(2),
     }
 
     enum class AppUartModuleActionResponseMessages(val type: Byte) {
         TERMINAL_RETURN_TYPE(0),
         RECEIVE_LOG(1),
+        HANDSHAKE_DONE(2),
+    }
+
+    class AppUartModuleHandshakeMessage : ConnectionMessageTypes {
+        val nodeId: Short
+
+        constructor(nodeId: Short) {
+            this.nodeId = nodeId
+        }
+
+        override fun createBytePacket(): ByteArray {
+            return getByteBufferAllocate(
+                SIZEOF_APP_UART_MODULE_HANDSHAKE_MESSAGE
+            ).putShort(nodeId).array()
+        }
+
+        companion object {
+            const val SIZEOF_APP_UART_MODULE_HANDSHAKE_MESSAGE = 2
+        }
+
     }
 
     class AppUartModuleDataMessage : ConnectionMessageTypes {
