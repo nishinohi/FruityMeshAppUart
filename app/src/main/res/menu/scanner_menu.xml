@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.fruitymeshappuart.ScannerActivity">
+    <group
+        android:visible="true">
+        <item
+            android:id="@+id/restart_scan"
+            android:icon="@drawable/ic_baseline_refresh_24"
+            android:title="@string/restart_scan"
+            app:showAsAction="ifRoom" />
+    </group>
+    <item
+        android:id="@+id/filter_rssi"
+        android:icon="@drawable/ic_baseline_filter_alt_24"
+        android:title="@string/menu_filter"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_rssi"
+                android:checkable="true"
+                android:title="@string/menu_sort_rssi" />
+            <item
+                android:id="@+id/filter_nearby"
+                android:checkable="true"
+                android:title="@string/menu_filter_nearby" />
+        </menu>
+    </item>
+</menu>

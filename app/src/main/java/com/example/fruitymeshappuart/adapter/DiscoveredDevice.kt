@@ -9,6 +9,7 @@ import com.example.fruitymeshappuart.fruity.types.AdvStructureFlags
 import com.example.fruitymeshappuart.fruity.types.AdvStructureMeshAccessServiceData
 import com.example.fruitymeshappuart.fruity.types.AdvStructureUUID16
 import com.example.fruitymeshappuart.fruity.types.ServiceDataMessageType
+import kotlin.math.abs
 
 class DiscoveredDevice(var lastScanResult: ScanResult) : Parcelable {
     val device: BluetoothDevice get() = lastScanResult.device
@@ -28,8 +29,8 @@ class DiscoveredDevice(var lastScanResult: ScanResult) : Parcelable {
     }
 
     fun update(scanResult: ScanResult) {
-        lastScanResult = scanResult
         previousRssi = rssi
+        lastScanResult = scanResult
         highestRssi = if (highestRssi > rssi) highestRssi else rssi
         scanResult.scanRecord?.let { checkEnrolledFromMeshAccessAdvertise(it) }
     }
@@ -51,11 +52,7 @@ class DiscoveredDevice(var lastScanResult: ScanResult) : Parcelable {
 
     /* package */
     fun hasRssiLevelChanged(): Boolean {
-        val newLevel =
-            if (rssi <= 10) 0 else if (rssi <= 28) 1 else if (rssi <= 45) 2 else if (rssi <= 65) 3 else 4
-        val oldLevel =
-            if (previousRssi <= 10) 0 else if (previousRssi <= 28) 1 else if (previousRssi <= 45) 2 else if (previousRssi <= 65) 3 else 4
-        return newLevel != oldLevel
+        return abs(previousRssi - rssi) > 0
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

@@ -46,9 +46,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:scaleType="center"
         app:srcCompat="@drawable/ic_signal_bar"
         tools:src="@drawable/ic_signal_3_bar" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/device_rssi"
+        style="@style/device_list_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rssi"
+        android:layout_alignParentEnd="true"
+        tools:text="-51 dBm" />
+
 
 </RelativeLayout>

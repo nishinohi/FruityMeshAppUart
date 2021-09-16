@@ -47,5 +47,9 @@
     <string name="send">Send</string>
     <string name="log">Log</string>
     <string name="too_long_command">Too long command(max 300)</string>
+    <string name="menu_filter_nearby">Only nearby devices</string>
+    <string name="restart_scan">Restart Scan</string>
+    <string name="menu_filter">Menu Filter</string>
+    <string name="menu_sort_rssi">Sort by Rssi</string>
 
 </resources>

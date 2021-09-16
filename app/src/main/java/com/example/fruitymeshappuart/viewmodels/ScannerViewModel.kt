@@ -8,6 +8,9 @@ import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 
 class ScannerViewModel(application: Application) : AndroidViewModel(application) {
     private val bleAdapter: BluetoothAdapter by lazy(LazyThreadSafetyMode.NONE) {
@@ -19,12 +22,18 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
     val bluetoothState: MutableLiveData<Boolean> = MutableLiveData()
     val deniedPermissionState: MutableLiveData<List<String>> = MutableLiveData()
     val gpsState: MutableLiveData<Boolean> = MutableLiveData()
-    val devicesLiveData: DevicesLiveData = DevicesLiveData(true, false)
+    val devicesLiveData: DevicesLiveData = DevicesLiveData(false)
     private val locationManager = application.getSystemService(LocationManager::class.java)
+    val sortRssiState: MutableLiveData<Boolean> = MutableLiveData(false)
+    val nearByState: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    private fun updateDeviceLiveData() {
+        devicesLiveData.applyFilter(nearByState.value ?: false, sortRssiState.value ?: false)
+    }
 
     fun refresh() {
         scannerLiveData.refresh()
-        devicesLiveData.applyFilter()
+        updateDeviceLiveData()
     }
 
     fun startScan() {
@@ -33,6 +42,12 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
             setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             setReportDelay(500)
         }.build()
+
+        GlobalScope.async {
+            delay(5000)
+            stopScan()
+            scannerLiveData.scanningStopped()
+        }
 
 //        handler.postDelayed({
 //            scannerLiveData.scanningStopped()
@@ -83,6 +98,30 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
         else disableGps()
     }
 
+    fun disableSortByRssi() {
+        sortRssiState.postValue(false)
+    }
+
+    fun enableSortByRssi() {
+        sortRssiState.postValue(true)
+    }
+
+    fun isSortByRssi(): Boolean {
+        return sortRssiState.value == true
+    }
+
+    fun disableShowOnlyNearby() {
+        nearByState.postValue(false)
+    }
+
+    fun enableShowOnlyNearby() {
+        nearByState.postValue(true)
+    }
+
+    fun isShowOnlyNearBy(): Boolean {
+        return nearByState.value == true
+    }
+
     fun updateDeniedPermission(deniedPermissions: List<String>) {
         deniedPermissionState.postValue(deniedPermissions)
     }
@@ -98,7 +137,7 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             if (result == null) return
             devicesLiveData.deviceDiscovered(result)
-            devicesLiveData.applyFilter()
+            updateDeviceLiveData()
             scannerLiveData.recordFound()
         }
 

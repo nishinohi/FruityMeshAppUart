@@ -9,18 +9,20 @@ import com.example.fruitymeshappuart.fruity.types.FmTypes
 
 class DevicesLiveData(
     private val filterUuidRequired: Boolean,
-    private val filterNearbyOnly: Boolean,
 ) :
     LiveData<MutableList<DiscoveredDevice>>() {
 
     private var discoveredDevices: MutableList<DiscoveredDevice> = mutableListOf()
-    var filteredDevices: MutableList<DiscoveredDevice> = mutableListOf()
+    private var filteredDevices: MutableList<DiscoveredDevice> = mutableListOf()
 
-    fun applyFilter(): Boolean {
+    fun applyFilter(nearBy: Boolean = false, sortByRssi: Boolean = false): Boolean {
         filteredDevices = discoveredDevices.filter { discoveredDevice ->
-            this.filterNearby(discoveredDevice.lastScanResult, FILTER_RSSI) &&
-                    this.filterServiceUuid(discoveredDevice.lastScanResult)
+            this.filterServiceUuid(discoveredDevice.lastScanResult) &&
+                    if (nearBy) this.filterNearby(
+                        discoveredDevice.lastScanResult, FILTER_RSSI
+                    ) else true
         }.toMutableList()
+        if (sortByRssi) filteredDevices = filteredDevices.sortedByDescending { it.rssi }.toMutableList()
         postValue(filteredDevices)
         return filteredDevices.isNotEmpty()
     }
@@ -34,15 +36,12 @@ class DevicesLiveData(
         }
 
         val newDevice = DiscoveredDevice(scanResult)
-        if (discoveredDevices.size == 0 ||
-            discoveredDevices.find { it.device.address == scanResult.device.address } == null
-        ) {
+        val existDevice = discoveredDevices.find { it.device.address == scanResult.device.address }
+        if (discoveredDevices.size == 0 || existDevice == null) {
             discoveredDevices.add(newDevice)
             return
         }
-        discoveredDevices = discoveredDevices.map {
-            if (it.device.address == scanResult.device.address) newDevice else it
-        }.toMutableList()
+        existDevice.update(scanResult)
     }
 
     private fun filterServiceUuid(scanResult: ScanResult): Boolean {
@@ -61,17 +60,18 @@ class DevicesLiveData(
                 return (parcelUuid.uuid.toString().substring(0, 8)
                     .compareTo(
                         FmTypes.MESH_SERVICE_DATA_SERVICE_UUID16.toString()
-                        .substring(0, 8)) == 0)
+                            .substring(0, 8)
+                    ) == 0)
             }
 
         return maServiceUuid != null
     }
 
-    private fun filterNearby(scanResult: ScanResult, rssi: Int): Boolean {
-        return !this.filterNearbyOnly || scanResult.rssi > rssi
+    private fun filterNearby(scanResult: ScanResult, minRssi: Int): Boolean {
+        return scanResult.rssi > minRssi
     }
 
     companion object {
-        private const val FILTER_RSSI = -50 // [dBm]
+        private const val FILTER_RSSI = -60 // [dBm]
     }
 }

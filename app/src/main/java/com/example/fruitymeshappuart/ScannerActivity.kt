@@ -9,6 +9,8 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,8 +25,10 @@ class ScannerActivity : AppCompatActivity() {
     private lateinit var _bind: ActivityScannerBinding
     private val bind get() = _bind
     private val requestPermissions: List<String> =
-        arrayListOf(Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
+        arrayListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN
+        )
     private lateinit var deviceNamePreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +36,11 @@ class ScannerActivity : AppCompatActivity() {
         _bind = ActivityScannerBinding.inflate(layoutInflater)
         setContentView(bind.root)
         // get preference
-        deviceNamePreferences = getSharedPreferences(getString(R.string.preference_device_name_key),
-            Context.MODE_PRIVATE)
+        deviceNamePreferences = getSharedPreferences(
+            getString(R.string.preference_device_name_key),
+            Context.MODE_PRIVATE
+        )
+        setSupportActionBar(bind.scannerToolBar)
         // set recycle view adapter and recycle list observer
         setRecycleViewAdapter()
         // set live data observer
@@ -45,6 +52,38 @@ class ScannerActivity : AppCompatActivity() {
         // register broadcast receiver
         registerBleStateBroadcastReceiver()
         registerGpsStateBroadcastReceiver()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.scanner_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.restart_scan -> {
+                scannerViewModel.startScan()
+                true
+            }
+            R.id.filter_nearby -> {
+                item.isChecked = !item.isChecked
+                if (item.isChecked)
+                    scannerViewModel.enableShowOnlyNearby()
+                else
+                    scannerViewModel.disableShowOnlyNearby()
+                true
+            }
+            R.id.sort_rssi -> {
+                item.isChecked = !item.isChecked
+                if (item.isChecked)
+                    scannerViewModel.enableSortByRssi()
+                else
+                    scannerViewModel.disableSortByRssi()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onResume() {
@@ -104,23 +143,34 @@ class ScannerActivity : AppCompatActivity() {
         // set live data observer
         scannerViewModel.bluetoothState.observe(this) {
             switchContentsVisibility(
-                it, scannerViewModel.isGpsEnable(), scannerViewModel.getDeniedPermission())
+                it, scannerViewModel.isGpsEnable(), scannerViewModel.getDeniedPermission()
+            )
             switchScanner(
-                it, scannerViewModel.isGpsEnable(), scannerViewModel.getDeniedPermission())
+                it, scannerViewModel.isGpsEnable(), scannerViewModel.getDeniedPermission()
+            )
         }
         scannerViewModel.gpsState.observe(this, {
             switchContentsVisibility(
-                scannerViewModel.isBleEnable(), it, scannerViewModel.getDeniedPermission())
+                scannerViewModel.isBleEnable(), it, scannerViewModel.getDeniedPermission()
+            )
             switchScanner(
-                scannerViewModel.isBleEnable(), it, scannerViewModel.getDeniedPermission())
+                scannerViewModel.isBleEnable(), it, scannerViewModel.getDeniedPermission()
+            )
         })
         scannerViewModel.deniedPermissionState.observe(this) {
             switchContentsVisibility(
-                scannerViewModel.isBleEnable(), scannerViewModel.isGpsEnable(), it)
+                scannerViewModel.isBleEnable(), scannerViewModel.isGpsEnable(), it
+            )
             switchScanner(scannerViewModel.isBleEnable(), scannerViewModel.isGpsEnable(), it)
         }
         scannerViewModel.scannerLiveData.observe(this, {
-//            scannerViewModel.startScan()
+            bind.scannerProgress.isIndeterminate = scannerViewModel.scannerLiveData.isScanning
+        })
+        scannerViewModel.nearByState.observe(this, {
+            scannerViewModel.refresh()
+        })
+        scannerViewModel.sortRssiState.observe(this, {
+            scannerViewModel.refresh()
         })
     }
 
@@ -175,8 +225,10 @@ class ScannerActivity : AppCompatActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val state =
                     intent?.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF)
-                val preState = intent?.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE,
-                    BluetoothAdapter.STATE_OFF)
+                val preState = intent?.getIntExtra(
+                    BluetoothAdapter.EXTRA_PREVIOUS_STATE,
+                    BluetoothAdapter.STATE_OFF
+                )
                 when (state) {
                     BluetoothAdapter.STATE_ON -> {
                         scannerViewModel.enableBle()
@@ -217,8 +269,10 @@ class ScannerActivity : AppCompatActivity() {
     private fun checkDeniedPermission(permissions: List<String>): List<String> {
         val deniedPermissions = mutableListOf<String>()
         permissions.forEach {
-            if (ContextCompat.checkSelfPermission(this,
-                    it) != PackageManager.PERMISSION_GRANTED
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    it
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 deniedPermissions.add(it)
             }

@@ -31,6 +31,7 @@ class DevicesAdapter(private val onItemClick: (DiscoveredDevice) -> Unit) :
             if (discoveredDevice.enrolled) R.color.icon_background_color_activated else
                 R.color.icon_background_color_non_activated)
         )
+        holder.binding.deviceRssi.text = "${discoveredDevice.rssi} dBm"
         val rssiPercent = (100.0f * (127.0f + discoveredDevice.rssi) / (127.0f + 20.0f)).toInt()
         holder.binding.rssi.setImageLevel(rssiPercent)
 
