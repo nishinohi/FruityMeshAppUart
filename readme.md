@@ -16,7 +16,8 @@ Build this branch with the AppUartModule added.
 
 ### Caution
 
-This PJ is a personal development and **does not have a company identifier registered with the BLE SIG**. This AppUartModule uses `0xAAAAA` as a temporary Vendor ID (which is not yet used). Please change the Vendor ID if you want to use this module in a PJ that contains a module that uses a duplicate Vendor ID.
+BLE advertisement packets have to include a Company Identifier that has been applied for and registered with the BLE SIG. Although this PJ is a personal development, it uses the `Company Identifier (0x024D)` of [M-Way Solutions GmbH](https://mway.io/en/) with their permission.
+**Please be careful if you fork the source and modify it.**
 
 ## Build Smart Phone App
 
