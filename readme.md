@@ -31,15 +31,17 @@ Build this source in Android Studio.
 * Viewing logs
 
 # Smartphone OS and version
-Only Android is supported; the AES 128 ECB encryption used in FruityMesh is not available in versions lower than Android SDK 26, so it can only be used on devices running Android 8.0 and above.
+Only Android is supported the AES 128 ECB encryption used in FruityMesh is not available in versions lower than Android SDK 26, so it can only be used on devices running Android 8.0 and above.
 
-# limitation of feature
+# Limitation of feature
 
 As this is a test application, it has the following functional limitations.
-limitation of functions
 
 * You can only connect with the Network key in the Encryption Key.
 * Only the default network key of FruityMesh can be used.（22:22:22:22:22:22:22:22:22:22:22:22:22:22:22:22）
-* Cannot send log of MeshAccessConnection
+* Logs output by the module will not be sent to the app until the module finishes sending packets to the app
 
-MeshAccessConnection logs (Log tag is `MACON`) the packets as they are sent and received. Of course, the same is true for the log packets that AppUartModule sends to the smartphone.In other words, if you output the log of MeshAccessConnection, it will keep sending logs forever: sending logs, sending logs of MeshAccessConnection by sending logs, and so on.
+Logs output by the module will not be sent to the app until the module finishes sending packets to the app (or more precisely, until the end of the SendModuleActionMessage call).
+The reason for this is to **prevent an infinite loop of log sending**.
+For example, if `MeshAccessConnection` logging is enabled, the log will be output when a packet is sent. This will result in an infinite number of logs being sent, as shown below.
+`Send log A` -> `MeshAccessConnection outputs log B when sending log A` -> `Send log B` -> `MeshAccessConnection outputs log C when sending log B` -> `Send log C` ->...
